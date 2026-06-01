@@ -188,7 +188,7 @@ export default function HQ() {
       <div className="card hq-countdown-card">
         <Countdown />
         <div className="hq-ceremony-note">
-          Opening Ceremony · Sat 16 Aug · Falls Creek · Dress: Ridiculous
+          Opening Ceremony · Sat 16 Aug · Falls Creek · Dress: Aldi Budget, Maximum Confidence
         </div>
       </div>
 
