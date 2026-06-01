@@ -915,3 +915,101 @@ h1, h2, h3, h4, h5, h6 {
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Kit Bag Tab ── */
+.kitbag-category {
+  margin-bottom: 12px;
+}
+
+.kitbag-cat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.kitbag-cat-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 0.05em;
+  color: var(--white);
+}
+
+.kitbag-cat-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.kitbag-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.kitbag-progress-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--navy-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.kitbag-progress-fill {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.kitbag-progress-label {
+  font-size: 0.75rem;
+  color: var(--grey);
+  white-space: nowrap;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.kitbag-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.kitbag-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.1s;
+  font-size: 0.9rem;
+}
+
+.kitbag-item:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+.kitbag-item--checked .kitbag-item-name {
+  text-decoration: line-through;
+  color: var(--grey);
+}
+
+.kitbag-checkbox {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.kitbag-item-name {
+  flex: 1;
+  color: var(--white);
+}
+
+.kitbag-checked-by {
+  font-size: 0.72rem;
+  color: var(--grey);
+  font-style: italic;
+  white-space: nowrap;
+}
