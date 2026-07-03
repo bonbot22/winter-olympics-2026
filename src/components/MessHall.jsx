@@ -3,6 +3,11 @@ import { doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useCollection } from '../hooks/useCollection';
 
+function formatDate(dateStr) {
+  const [year, month, day] = dateStr.split('-');
+  return `${day}/${month}/${year}`;
+}
+
 function NightCard({ night, athletes }) {
   const [editingMeal, setEditingMeal] = useState(false);
   const [mealName, setMealName] = useState(night.mealName ?? '');
@@ -39,7 +44,7 @@ function NightCard({ night, athletes }) {
     <div className="night-card card">
       <div className="night-card-header">
         <div className="night-label">{night.label}</div>
-        <div className="night-date">{night.date}</div>
+        <div className="night-date">{formatDate(night.date)}</div>
       </div>
 
       <div className="night-meal-row">
