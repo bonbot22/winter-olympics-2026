@@ -24,37 +24,6 @@ const DINNER_NIGHTS = [
   { id: 'night-19', date: '2026-08-19', label: 'Tuesday Night',   mealName: '', assignees: [], notes: '' },
 ];
 
-const PACKING_ITEMS = [
-  { item: 'Ski jacket',                  category: 'on-mountain' },
-  { item: 'Ski pants',                   category: 'on-mountain' },
-  { item: 'Thermal base layer (top)',    category: 'on-mountain' },
-  { item: 'Thermal base layer (bottom)', category: 'on-mountain' },
-  { item: 'Ski socks x3',               category: 'on-mountain' },
-  { item: 'Helmet',                      category: 'on-mountain' },
-  { item: 'Goggles',                     category: 'on-mountain' },
-  { item: 'Gloves',                      category: 'on-mountain' },
-  { item: 'Buff/neck warmer',           category: 'on-mountain' },
-  { item: 'Sunscreen SPF50+',           category: 'on-mountain' },
-  { item: 'Lip balm SPF',               category: 'on-mountain' },
-  { item: 'Hand warmers',               category: 'on-mountain' },
-  { item: 'Ski pass holder',            category: 'on-mountain' },
-  { item: 'Warm jacket',                category: 'apres' },
-  { item: 'Casual pants',               category: 'apres' },
-  { item: 'Warm boots/Uggs',            category: 'apres' },
-  { item: 'Going-out outfit',           category: 'apres' },
-  { item: 'Pyjamas',                    category: 'apres' },
-  { item: 'Shampoo/conditioner',        category: 'toiletries' },
-  { item: 'Moisturiser',                category: 'toiletries' },
-  { item: 'Deodorant',                  category: 'toiletries' },
-  { item: 'Toothbrush/toothpaste',      category: 'toiletries' },
-  { item: 'Ibuprofen/Panadol',          category: 'toiletries' },
-  { item: 'Medicare card',              category: 'admin' },
-  { item: 'Ski hire confirmation',      category: 'admin' },
-  { item: 'Accommodation details',      category: 'admin' },
-  { item: 'Cash',                        category: 'admin' },
-  { item: 'Portable charger',           category: 'admin' },
-];
-
 let seeded = false;
 
 export async function seedAll() {
@@ -62,10 +31,9 @@ export async function seedAll() {
   seeded = true;
 
   try {
-    const [challengesSnap, dinnerSnap, packingSnap] = await Promise.all([
+    const [challengesSnap, dinnerSnap] = await Promise.all([
       getDocs(collection(db, 'challenges')),
       getDocs(collection(db, 'dinnerRoster')),
-      getDocs(collection(db, 'packingList')),
     ]);
 
     const batch = writeBatch(db);
@@ -81,13 +49,6 @@ export async function seedAll() {
     if (dinnerSnap.empty) {
       DINNER_NIGHTS.forEach((n) => {
         batch.set(doc(db, 'dinnerRoster', n.id), n);
-      });
-      hasWork = true;
-    }
-
-    if (packingSnap.empty) {
-      PACKING_ITEMS.forEach((p) => {
-        batch.set(doc(collection(db, 'packingList')), { ...p, checkedBy: '', addedBy: 'system', createdAt: new Date() });
       });
       hasWork = true;
     }
