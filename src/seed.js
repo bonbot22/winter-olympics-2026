@@ -21,7 +21,6 @@ const DINNER_NIGHTS = [
   { id: 'night-16', date: '2026-08-16', label: 'Saturday Night',  mealName: '', assignees: [], notes: '' },
   { id: 'night-17', date: '2026-08-17', label: 'Sunday Night',    mealName: '', assignees: [], notes: '' },
   { id: 'night-18', date: '2026-08-18', label: 'Monday Night',    mealName: '', assignees: [], notes: '' },
-  { id: 'night-19', date: '2026-08-19', label: 'Tuesday Night',   mealName: '', assignees: [], notes: '' },
 ];
 
 let seeded = false;
