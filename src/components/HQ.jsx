@@ -63,10 +63,15 @@ function Countdown() {
 
 function TripInfoCard({ config, onSaveAddress }) {
   const [editing, setEditing] = useState(false);
-  const [address, setAddress] = useState(config?.accommodationAddress ?? '');
+  const [draft, setDraft] = useState('');
+
+  function startEditing() {
+    setDraft(config?.accommodationAddress ?? '');
+    setEditing(true);
+  }
 
   function handleSave() {
-    onSaveAddress(address);
+    onSaveAddress(draft);
     setEditing(false);
   }
 
@@ -89,8 +94,8 @@ function TripInfoCard({ config, onSaveAddress }) {
               <span className="hq-address-edit">
                 <input
                   className="form-input"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSave()}
                   autoFocus
                 />
@@ -99,10 +104,10 @@ function TripInfoCard({ config, onSaveAddress }) {
             ) : (
               <span
                 className="hq-address-display"
-                onClick={() => setEditing(true)}
+                onClick={startEditing}
                 title="Click to edit"
               >
-                {address || <span className="hq-address-placeholder">Click to add address…</span>}
+                {config?.accommodationAddress || <span className="hq-address-placeholder">Click to add address…</span>}
                 <span className="hq-edit-icon">✏️</span>
               </span>
             )}
