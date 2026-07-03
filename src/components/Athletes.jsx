@@ -53,7 +53,7 @@ function AthleteCard({ athlete, onEdit, onDelete }) {
 
       <div className="athlete-meta">
         <span className="athlete-meta-item">
-          🗓 {athlete.arrivalDay === 'sat' ? 'Arriving Sat 16' : 'Arriving Sun 17'}
+          🗓 {athlete.arrivalDay === 'sat' ? 'Arriving Sun 16' : 'Arriving Mon 17'}
         </span>
         {athlete.room && (
           <span className="athlete-meta-item">🏠 {athlete.room}</span>
@@ -135,8 +135,8 @@ function AthleteForm({ athletes, editing, onClose }) {
         <div className="form-field">
           <label className="form-label">Arrival</label>
           <select className="form-input" value={form.arrivalDay} onChange={(e) => set('arrivalDay', e.target.value)}>
-            <option value="sat">Sat 16 Aug</option>
-            <option value="sun">Sun 17 Aug</option>
+            <option value="sat">Sun 16 Aug</option>
+            <option value="sun">Mon 17 Aug</option>
           </select>
         </div>
         <div className="form-field">

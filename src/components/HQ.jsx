@@ -132,7 +132,7 @@ function QuickStats({ athletes, cars }) {
   const stats = [
     { label: 'Athletes Confirmed', value: athletes.length },
     { label: 'Cars', value: cars.length },
-    { label: 'Nights', value: 4 },
+    { label: 'Nights', value: 3 },
     { label: 'Seats Available', value: totalSeats },
   ];
 
@@ -188,7 +188,7 @@ export default function HQ() {
       <div className="card hq-countdown-card">
         <Countdown />
         <div className="hq-ceremony-note">
-          Opening Ceremony · Sat 16 Aug · Falls Creek · Dress: Aldi Budget, Maximum Confidence
+          Opening Ceremony · Sun 16 Aug · Falls Creek · Dress: Aldi Budget, Maximum Confidence
         </div>
       </div>
 
