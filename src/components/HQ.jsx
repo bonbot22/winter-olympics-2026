@@ -4,7 +4,7 @@ import { db } from '../firebase';
 import { useCollection } from '../hooks/useCollection';
 import { seedAll } from '../seed';
 
-const TRIP_START = new Date('2026-08-16T00:00:00+10:00');
+const TRIP_START = new Date('2026-08-15T00:00:00+10:00');
 
 function useCountdown() {
   const [diff, setDiff] = useState(() => TRIP_START - Date.now());
@@ -81,7 +81,7 @@ function TripInfoCard({ config, onSaveAddress }) {
       <div className="hq-info-grid">
         <div className="hq-info-row">
           <span className="hq-info-key">Dates</span>
-          <span className="hq-info-val">16–19 August 2026</span>
+          <span className="hq-info-val">15–19 August 2026</span>
         </div>
         <div className="hq-info-row">
           <span className="hq-info-key">Location</span>
@@ -137,7 +137,7 @@ function QuickStats({ athletes, cars }) {
   const stats = [
     { label: 'Athletes Confirmed', value: athletes.length },
     { label: 'Cars', value: cars.length },
-    { label: 'Nights', value: 3 },
+    { label: 'Nights', value: 4 },
     { label: 'Seats Available', value: totalSeats },
   ];
 
@@ -168,7 +168,7 @@ export default function HQ() {
         setDoc(ref, {
           name: 'Winter Olympics 2026',
           location: 'Falls Creek, VIC',
-          startDate: '2026-08-16',
+          startDate: '2026-08-15',
           endDate: '2026-08-19',
           accommodationAddress: '',
         });
@@ -193,7 +193,7 @@ export default function HQ() {
       <div className="card hq-countdown-card">
         <Countdown />
         <div className="hq-ceremony-note">
-          Opening Ceremony · Sun 16 Aug · Falls Creek · Dress: Aldi Budget, Maximum Confidence
+          Opening Ceremony · Sat 15 Aug · Falls Creek · Dress: Aldi Budget, Maximum Confidence
         </div>
       </div>
 

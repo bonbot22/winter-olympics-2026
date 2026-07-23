@@ -53,7 +53,7 @@ function AthleteCard({ athlete, onEdit, onDelete }) {
 
       <div className="athlete-meta">
         <span className="athlete-meta-item">
-          🗓 {athlete.arrivalDay === 'sat' ? 'Arriving Sun 16' : 'Arriving Mon 17'}
+          🗓 {athlete.arrivalDay === 'sat' ? 'Arriving Sat 15' : 'Arriving Sun 16'}
         </span>
         {athlete.room && (
           <span className="athlete-meta-item">🏠 {athlete.room}</span>
@@ -135,8 +135,8 @@ function AthleteForm({ athletes, editing, onClose }) {
         <div className="form-field">
           <label className="form-label">Arrival</label>
           <select className="form-input" value={form.arrivalDay} onChange={(e) => set('arrivalDay', e.target.value)}>
-            <option value="sat">Sun 16 Aug</option>
-            <option value="sun">Mon 17 Aug</option>
+            <option value="sat">Sat 15 Aug</option>
+            <option value="sun">Sun 16 Aug</option>
           </select>
         </div>
         <div className="form-field">
@@ -217,7 +217,7 @@ export default function Athletes() {
       {athletes.length === 0 ? (
         <div className="empty-state">
           <h3>No Athletes Registered Yet</h3>
-          <p>The Opening Ceremony is in {Math.max(0, Math.ceil((new Date('2026-08-16') - Date.now()) / 86400000))} days — get signing up.</p>
+          <p>The Opening Ceremony is in {Math.max(0, Math.ceil((new Date('2026-08-15') - Date.now()) / 86400000))} days — get signing up.</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className="empty-state">
