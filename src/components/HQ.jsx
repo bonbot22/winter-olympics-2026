@@ -81,7 +81,7 @@ function TripInfoCard({ config, onSaveAddress }) {
       <div className="hq-info-grid">
         <div className="hq-info-row">
           <span className="hq-info-key">Dates</span>
-          <span className="hq-info-val">15–19 August 2026</span>
+          <span className="hq-info-val">15–18 August 2026</span>
         </div>
         <div className="hq-info-row">
           <span className="hq-info-key">Location</span>
@@ -137,7 +137,7 @@ function QuickStats({ athletes, cars }) {
   const stats = [
     { label: 'Athletes Confirmed', value: athletes.length },
     { label: 'Cars', value: cars.length },
-    { label: 'Nights', value: 4 },
+    { label: 'Nights', value: 3 },
     { label: 'Seats Available', value: totalSeats },
   ];
 
@@ -169,7 +169,7 @@ export default function HQ() {
           name: 'Winter Olympics 2026',
           location: 'Falls Creek, VIC',
           startDate: '2026-08-15',
-          endDate: '2026-08-19',
+          endDate: '2026-08-18',
           accommodationAddress: '',
         });
       }
