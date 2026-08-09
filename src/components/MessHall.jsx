@@ -201,12 +201,13 @@ function SnacksCard({ athletes }) {
               <option key={a.id} value={a.name}>{a.name}</option>
             ))}
           </select>
-          <input
-            className="form-input"
+          <textarea
+            className="form-input night-notes-input"
             value={item}
             onChange={(e) => setItem(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') add(); }}
-            placeholder="Bringing…"
+            onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) add(); }}
+            placeholder="Bringing… (Ctrl+Enter to add)"
+            rows={2}
             style={{ flex: 1 }}
           />
           <button className="btn btn-gold" onClick={add} disabled={!person || !item.trim()}>Add</button>
