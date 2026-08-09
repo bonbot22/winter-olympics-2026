@@ -189,12 +189,11 @@ function SnacksCard({ athletes }) {
           </div>
         )}
 
-        <div className="car-add-passenger">
+        <div className="snack-add">
           <select
             className="form-input"
             value={person}
             onChange={(e) => setPerson(e.target.value)}
-            style={{ flex: 1 }}
           >
             <option value="">Who…</option>
             {athletes.map((a) => (
@@ -207,8 +206,7 @@ function SnacksCard({ athletes }) {
             onChange={(e) => setItem(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) add(); }}
             placeholder="Bringing… (Ctrl+Enter to add)"
-            rows={2}
-            style={{ flex: 1 }}
+            rows={3}
           />
           <button className="btn btn-gold" onClick={add} disabled={!person || !item.trim()}>Add</button>
         </div>

@@ -855,6 +855,12 @@ h1, h2, h3, h4, h5, h6 {
   gap: 12px;
 }
 
+.snack-add {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .night-card {
   display: flex;
   flex-direction: column;
