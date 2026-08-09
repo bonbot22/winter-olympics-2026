@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { useState, useEffect } from 'react';
+import { doc, updateDoc, arrayUnion, arrayRemove, onSnapshot, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useCollection } from '../hooks/useCollection';
 
@@ -8,13 +8,217 @@ function formatDate(dateStr) {
   return `${day}/${month}/${year}`;
 }
 
+function EditableTextBox({ docRef, field, label, value, placeholder, emptyLabel }) {
+  const [editing, setEditing] = useState(false);
+  const [text, setText] = useState(value ?? '');
+
+  useEffect(() => {
+    if (!editing) setText(value ?? '');
+  }, [value, editing]);
+
+  async function save() {
+    await updateDoc(docRef, { [field]: text.trim() });
+    setEditing(false);
+  }
+
+  return (
+    <div className="night-notes-row">
+      <span className="section-label" style={{ marginBottom: 0 }}>{label}</span>
+      {editing ? (
+        <span className="night-inline-edit">
+          <textarea
+            className="form-input night-notes-input"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) save(); if (e.key === 'Escape') setEditing(false); }}
+            placeholder={placeholder}
+            rows={3}
+            autoFocus
+          />
+          <button className="btn btn-gold" onClick={save} style={{ padding: '6px 14px' }}>Save</button>
+        </span>
+      ) : (
+        <span className="night-meal-display" onClick={() => setEditing(true)}>
+          {value || <span className="hq-address-placeholder">{emptyLabel}</span>}
+          <span className="hq-edit-icon">✏️</span>
+        </span>
+      )}
+    </div>
+  );
+}
+
+function Assignees({ docRef, assignees, athletes }) {
+  const [selected, setSelected] = useState('');
+  const available = athletes.filter((a) => !assignees.includes(a.name));
+
+  async function add() {
+    if (!selected) return;
+    await updateDoc(docRef, { assignees: arrayUnion(selected) });
+    setSelected('');
+  }
+
+  async function remove(name) {
+    await updateDoc(docRef, { assignees: arrayRemove(name) });
+  }
+
+  return (
+    <div className="night-cooks-section">
+      <span className="section-label">Assigned</span>
+      {assignees.length === 0 ? (
+        <div className="night-no-cooks">⚠️ Nobody assigned yet</div>
+      ) : (
+        <div className="car-chips" style={{ marginBottom: 8 }}>
+          {assignees.map((name) => (
+            <span key={name} className="chip">
+              {name}
+              <button className="chip-remove" onClick={() => remove(name)}>×</button>
+            </span>
+          ))}
+        </div>
+      )}
+
+      {available.length > 0 && (
+        <div className="car-add-passenger">
+          <select
+            className="form-input"
+            value={selected}
+            onChange={(e) => setSelected(e.target.value)}
+            style={{ flex: 1 }}
+          >
+            <option value="">Assign someone…</option>
+            {available.map((a) => (
+              <option key={a.id} value={a.name}>{a.name}</option>
+            ))}
+          </select>
+          <button className="btn btn-gold" onClick={add} disabled={!selected}>Add</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MealCard({ docId, title, athletes }) {
+  const [data, setData] = useState(null);
+  const ref = doc(db, 'messHall', docId);
+
+  useEffect(() => {
+    const unsub = onSnapshot(ref, (snap) => {
+      if (snap.exists()) {
+        setData(snap.data());
+      } else {
+        setDoc(ref, { assignees: [], notes: '' });
+      }
+    });
+    return unsub;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [docId]);
+
+  const assignees = data?.assignees ?? [];
+
+  return (
+    <div className="night-card card">
+      <div className="night-card-header">
+        <div className="night-label">{title}</div>
+      </div>
+
+      <Assignees docRef={ref} assignees={assignees} athletes={athletes} />
+
+      <EditableTextBox
+        docRef={ref}
+        field="notes"
+        label="Notes"
+        value={data?.notes}
+        placeholder="Any notes… (Ctrl+Enter to save)"
+        emptyLabel="Add notes…"
+      />
+    </div>
+  );
+}
+
+function SnacksCard({ athletes }) {
+  const [data, setData] = useState(null);
+  const [person, setPerson] = useState('');
+  const [item, setItem] = useState('');
+  const ref = doc(db, 'messHall', 'snacks');
+
+  useEffect(() => {
+    const unsub = onSnapshot(ref, (snap) => {
+      if (snap.exists()) {
+        setData(snap.data());
+      } else {
+        setDoc(ref, { items: [] });
+      }
+    });
+    return unsub;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const items = data?.items ?? [];
+
+  async function add() {
+    const name = person.trim();
+    const what = item.trim();
+    if (!name || !what) return;
+    await updateDoc(ref, { items: [...items, { name, item: what }] });
+    setPerson('');
+    setItem('');
+  }
+
+  async function remove(idx) {
+    await updateDoc(ref, { items: items.filter((_, i) => i !== idx) });
+  }
+
+  return (
+    <div className="night-card card">
+      <div className="night-card-header">
+        <div className="night-label">Snacks — Who's Bringing What</div>
+      </div>
+
+      <div className="night-cooks-section">
+        <span className="section-label">On the list</span>
+        {items.length === 0 ? (
+          <div className="night-no-cooks">Nothing yet — add what you're bringing</div>
+        ) : (
+          <div className="car-chips" style={{ marginBottom: 8 }}>
+            {items.map((it, idx) => (
+              <span key={idx} className="chip">
+                {it.name} — {it.item}
+                <button className="chip-remove" onClick={() => remove(idx)}>×</button>
+              </span>
+            ))}
+          </div>
+        )}
+
+        <div className="car-add-passenger">
+          <select
+            className="form-input"
+            value={person}
+            onChange={(e) => setPerson(e.target.value)}
+            style={{ flex: 1 }}
+          >
+            <option value="">Who…</option>
+            {athletes.map((a) => (
+              <option key={a.id} value={a.name}>{a.name}</option>
+            ))}
+          </select>
+          <input
+            className="form-input"
+            value={item}
+            onChange={(e) => setItem(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') add(); }}
+            placeholder="Bringing…"
+            style={{ flex: 1 }}
+          />
+          <button className="btn btn-gold" onClick={add} disabled={!person || !item.trim()}>Add</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function NightCard({ night, athletes }) {
   const [editingMeal, setEditingMeal] = useState(false);
   const [mealName, setMealName] = useState(night.mealName ?? '');
-  const [editingNotes, setEditingNotes] = useState(false);
-  const [notes, setNotes] = useState(night.notes ?? '');
-  const [editingSnacks, setEditingSnacks] = useState(false);
-  const [snacks, setSnacks] = useState(night.snacks ?? '');
   const [selectedCook, setSelectedCook] = useState('');
 
   const ref = doc(db, 'dinnerRoster', night.id);
@@ -25,16 +229,6 @@ function NightCard({ night, athletes }) {
   async function saveMeal() {
     await updateDoc(ref, { mealName: mealName.trim() });
     setEditingMeal(false);
-  }
-
-  async function saveNotes() {
-    await updateDoc(ref, { notes: notes.trim() });
-    setEditingNotes(false);
-  }
-
-  async function saveSnacks() {
-    await updateDoc(ref, { snacks: snacks.trim() });
-    setEditingSnacks(false);
   }
 
   async function addCook() {
@@ -109,51 +303,14 @@ function NightCard({ night, athletes }) {
         )}
       </div>
 
-      <div className="night-notes-row">
-        <span className="section-label" style={{ marginBottom: 0 }}>Snacks — who's bringing what</span>
-        {editingSnacks ? (
-          <span className="night-inline-edit">
-            <textarea
-              className="form-input night-notes-input"
-              value={snacks}
-              onChange={(e) => setSnacks(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) saveSnacks(); if (e.key === 'Escape') setEditingSnacks(false); }}
-              placeholder="e.g. Chips — Jess, Dip — Sam… (Ctrl+Enter to save)"
-              rows={3}
-              autoFocus
-            />
-            <button className="btn btn-gold" onClick={saveSnacks} style={{ padding: '6px 14px' }}>Save</button>
-          </span>
-        ) : (
-          <span className="night-meal-display" onClick={() => setEditingSnacks(true)}>
-            {night.snacks || <span className="hq-address-placeholder">Add snacks…</span>}
-            <span className="hq-edit-icon">✏️</span>
-          </span>
-        )}
-      </div>
-
-      <div className="night-notes-row">
-        <span className="section-label" style={{ marginBottom: 0 }}>Notes</span>
-        {editingNotes ? (
-          <span className="night-inline-edit">
-            <textarea
-              className="form-input night-notes-input"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) saveNotes(); if (e.key === 'Escape') setEditingNotes(false); }}
-              placeholder="Any notes… (Ctrl+Enter to save)"
-              rows={3}
-              autoFocus
-            />
-            <button className="btn btn-gold" onClick={saveNotes} style={{ padding: '6px 14px' }}>Save</button>
-          </span>
-        ) : (
-          <span className="night-meal-display" onClick={() => setEditingNotes(true)}>
-            {night.notes || <span className="hq-address-placeholder">Add notes…</span>}
-            <span className="hq-edit-icon">✏️</span>
-          </span>
-        )}
-      </div>
+      <EditableTextBox
+        docRef={ref}
+        field="notes"
+        label="Notes"
+        value={night.notes}
+        placeholder="Any notes… (Ctrl+Enter to save)"
+        emptyLabel="Add notes…"
+      />
     </div>
   );
 }
@@ -167,20 +324,44 @@ export default function MessHall() {
 
   const sorted = [...nights].sort((a, b) => a.date.localeCompare(b.date));
 
-  if (sorted.length === 0) {
-    return (
-      <div className="empty-state">
-        <h3>No Dinner Roster Yet</h3>
-        <p>The nights will appear once the app seeds on first load.</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="messhall-grid">
-      {sorted.map((night) => (
-        <NightCard key={night.id} night={night} athletes={athletes} />
-      ))}
+    <div className="messhall-page">
+      <section className="messhall-section">
+        <h2 className="messhall-section-heading">🍳 Breakfast</h2>
+        <div className="messhall-grid">
+          <MealCard docId="breakfast" title="Breakfast — Every Morning" athletes={athletes} />
+        </div>
+      </section>
+
+      <section className="messhall-section">
+        <h2 className="messhall-section-heading">🥪 Lunch</h2>
+        <div className="messhall-grid">
+          <MealCard docId="lunch" title="Lunch — Every Day on the Mountain" athletes={athletes} />
+        </div>
+      </section>
+
+      <section className="messhall-section">
+        <h2 className="messhall-section-heading">🍿 Snacks</h2>
+        <div className="messhall-grid">
+          <SnacksCard athletes={athletes} />
+        </div>
+      </section>
+
+      <section className="messhall-section">
+        <h2 className="messhall-section-heading">🍽️ Dinner</h2>
+        {sorted.length === 0 ? (
+          <div className="empty-state">
+            <h3>No Dinner Roster Yet</h3>
+            <p>The nights will appear once the app seeds on first load.</p>
+          </div>
+        ) : (
+          <div className="messhall-grid">
+            {sorted.map((night) => (
+              <NightCard key={night.id} night={night} athletes={athletes} />
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }
