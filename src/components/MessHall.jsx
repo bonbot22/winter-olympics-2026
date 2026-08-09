@@ -13,6 +13,8 @@ function NightCard({ night, athletes }) {
   const [mealName, setMealName] = useState(night.mealName ?? '');
   const [editingNotes, setEditingNotes] = useState(false);
   const [notes, setNotes] = useState(night.notes ?? '');
+  const [editingSnacks, setEditingSnacks] = useState(false);
+  const [snacks, setSnacks] = useState(night.snacks ?? '');
   const [selectedCook, setSelectedCook] = useState('');
 
   const ref = doc(db, 'dinnerRoster', night.id);
@@ -28,6 +30,11 @@ function NightCard({ night, athletes }) {
   async function saveNotes() {
     await updateDoc(ref, { notes: notes.trim() });
     setEditingNotes(false);
+  }
+
+  async function saveSnacks() {
+    await updateDoc(ref, { snacks: snacks.trim() });
+    setEditingSnacks(false);
   }
 
   async function addCook() {
@@ -103,15 +110,39 @@ function NightCard({ night, athletes }) {
       </div>
 
       <div className="night-notes-row">
+        <span className="section-label" style={{ marginBottom: 0 }}>Snacks — who's bringing what</span>
+        {editingSnacks ? (
+          <span className="night-inline-edit">
+            <textarea
+              className="form-input night-notes-input"
+              value={snacks}
+              onChange={(e) => setSnacks(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) saveSnacks(); if (e.key === 'Escape') setEditingSnacks(false); }}
+              placeholder="e.g. Chips — Jess, Dip — Sam… (Ctrl+Enter to save)"
+              rows={3}
+              autoFocus
+            />
+            <button className="btn btn-gold" onClick={saveSnacks} style={{ padding: '6px 14px' }}>Save</button>
+          </span>
+        ) : (
+          <span className="night-meal-display" onClick={() => setEditingSnacks(true)}>
+            {night.snacks || <span className="hq-address-placeholder">Add snacks…</span>}
+            <span className="hq-edit-icon">✏️</span>
+          </span>
+        )}
+      </div>
+
+      <div className="night-notes-row">
         <span className="section-label" style={{ marginBottom: 0 }}>Notes</span>
         {editingNotes ? (
           <span className="night-inline-edit">
-            <input
-              className="form-input"
+            <textarea
+              className="form-input night-notes-input"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') saveNotes(); if (e.key === 'Escape') setEditingNotes(false); }}
-              placeholder="Any notes…"
+              onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) saveNotes(); if (e.key === 'Escape') setEditingNotes(false); }}
+              placeholder="Any notes… (Ctrl+Enter to save)"
+              rows={3}
               autoFocus
             />
             <button className="btn btn-gold" onClick={saveNotes} style={{ padding: '6px 14px' }}>Save</button>

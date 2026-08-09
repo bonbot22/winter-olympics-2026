@@ -18,9 +18,9 @@ const CHALLENGES = [
 ];
 
 const DINNER_NIGHTS = [
-  { id: 'night-15', date: '2026-08-15', label: 'Saturday Night', mealName: '', assignees: [], notes: '' },
-  { id: 'night-16', date: '2026-08-16', label: 'Sunday Night',  mealName: '', assignees: [], notes: '' },
-  { id: 'night-17', date: '2026-08-17', label: 'Monday Night',  mealName: '', assignees: [], notes: '' },
+  { id: 'night-15', date: '2026-08-15', label: 'Saturday Night', mealName: '', assignees: [], snacks: '', notes: '' },
+  { id: 'night-16', date: '2026-08-16', label: 'Sunday Night',  mealName: '', assignees: [], snacks: '', notes: '' },
+  { id: 'night-17', date: '2026-08-17', label: 'Monday Night',  mealName: '', assignees: [], snacks: '', notes: '' },
 ];
 
 let seeded = false;
